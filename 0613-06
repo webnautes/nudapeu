@@ -1,0 +1,11 @@
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
+
+
+
+
+Mat &matInput = *(Mat *)mat_addr_input;
+Mat &matResult = *(Mat *)mat_addr_result;
+
+cvtColor(matInput, matResult, COLOR_RGBA2GRAY);
