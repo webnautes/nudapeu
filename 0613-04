@@ -1,0 +1,3 @@
+<activity android:name=".MainActivity"
+	android:screenOrientation="landscape"
+	android:configChanges="keyboardHidden|orientation">
