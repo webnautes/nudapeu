@@ -1,0 +1,29 @@
+import cv2
+import numpy as np
+
+
+img_color = cv2.imread("image.jpg", cv2.IMREAD_COLOR)
+
+height, width, channel = img_color.shape
+img_gray = np.zeros((height, width), np.uint8)
+
+for y in range(0, height):
+    for x in range(0, width):
+        # 컬러 영상의 경우 픽셀값 읽어오기
+        b = img_color.item(y, x, 0)
+        g = img_color.item(y, x, 1)
+        r = img_color.item(y, x, 2)
+        
+        
+        gray = (int(b) + int(g) + int(r)) / 3.0
+
+        # 그레이스케일의 경우 픽셀값 저장하기
+        img_gray.itemset(y, x, gray)
+
+
+cv2.imshow('bgr', img_color)
+cv2.imshow('gray', img_gray)
+
+cv2.waitKey(0)
+
+cv2.destroyAllWindows()
