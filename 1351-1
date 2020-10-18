@@ -1,0 +1,44 @@
+#include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
+//#include <opencv2/imgproc.hpp> // for cvtColor
+
+#include <iostream>
+
+
+using namespace cv;
+using namespace std;
+
+
+int main()
+{
+
+	Mat frame;
+
+	VideoCapture cap(0);
+	if (!cap.isOpened())
+	{
+		cerr << "카메라를 열 수 없습니다." << endl;
+		return -1;
+	}
+
+	while(1)
+	{
+		cap.read(frame);
+		if (frame.empty())
+		{
+			cerr << "캡쳐 실패" << endl;
+			break;
+		}
+
+		//cvtColor(frame, frame, COLOR_BGR2GRAY);
+
+		imshow("Live", frame);
+
+		if (waitKey(1) >= 0)
+			break;
+	}
+
+
+	return 0;
+}
