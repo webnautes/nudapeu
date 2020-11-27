@@ -1,0 +1,52 @@
+import cv2
+
+
+mouse_is_pressing = False
+start_x, starty = -1, -1
+
+
+def mouse_callback(event, x, y, flags, param):
+    global start_x, start_y,mouse_is_pressing
+
+    img_result = img_color.copy()
+
+    if event == cv2.EVENT_LBUTTONDOWN:
+
+        mouse_is_pressing = True
+        start_x, start_y = x, y
+
+        cv2.circle(img_result, (x,y), 10, (0, 255, 0), -1)
+
+        cv2.imshow("img_color", img_result)
+
+    elif event == cv2.EVENT_MOUSEMOVE:
+
+        if mouse_is_pressing:
+            cv2.rectangle(img_result, (start_x, start_y), (x, y), (0, 255, 0), 3)
+
+            cv2.imshow("img_color", img_result)
+
+    elif event == cv2.EVENT_LBUTTONUP:
+
+        mouse_is_pressing = False
+
+        img_cat = img_color[start_y:y, start_x:x]
+        img_cat = cv2.cvtColor(img_cat, cv2.COLOR_BGR2GRAY);
+        img_cat = cv2.cvtColor(img_cat, cv2.COLOR_GRAY2BGR);
+
+
+        img_result[start_y:y, start_x:x] = img_cat
+        cv2.imshow("img_color", img_result)
+        cv2.imshow("img_cat", img_cat)
+
+
+
+img_color = cv2.imread('cat.jpg', cv2.IMREAD_COLOR )
+
+cv2.imshow("img_color", img_color)
+cv2.setMouseCallback('img_color', mouse_callback)
+
+
+cv2.waitKey(0)
+
+cv2.destroyAllWindows()
