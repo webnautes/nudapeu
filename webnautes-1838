@@ -1,0 +1,104 @@
+import cv2
+import numpy as np
+
+
+count_mouse_click = 0
+pointX = []
+pointY = []
+caculate_start = 0
+
+img_frame = None
+message = ["Left Top", "Right Top", "Left Bottom", "Right Bottom"]
+
+
+def CallBackFunc(event, x, y, flags, userdata):
+
+    global count_mouse_click, caculate_start, img_original
+
+
+    if event == cv2.EVENT_MOUSEMOVE:
+
+        if count_mouse_click < 4:
+            img_frame = img_original.copy()
+            
+            cv2.putText(img_frame, f"Click {message[count_mouse_click]}", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,0,255), 3)
+
+            cv2.imshow('origianl', img_frame)
+
+    
+    if event == cv2.EVENT_LBUTTONDOWN:
+        
+        if count_mouse_click < 4:
+            print( f"{count_mouse_click}번째 왼쪽 마우스 버튼 클릭.. 좌표 = ({x},{y})")
+            pointX.append(x)
+            pointY.append(y)
+
+            count_mouse_click += 1
+
+    if count_mouse_click == 4 and caculate_start == 0:
+        caculate_start = 1
+
+        img_frame = img_original.copy()
+        cv2.putText(img_frame, f"Click all four points we need.", (100,100), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,0,255), 3)
+        cv2.imshow('origianl', img_frame)
+
+        width = np.abs(np.max(pointX) - np.min(pointX))
+        height = np.abs(np.max(pointY) - np.min(pointY))        
+
+
+        newpointX = [ pointX[3] - width, pointX[3], pointX[3] - width, pointX[3]]
+        newpointY = [ pointY[3] - height, pointY[3] - height, pointY[3], pointY[3]]
+
+        pts_src = []
+        pts_dst = []
+
+        for i in range(4):
+            pts_src.append((pointX[i], pointY[i]))
+            pts_dst.append((newpointX[i], newpointY[i]))
+        
+        pts_src = np.float32(pts_src)
+        pts_dst = np.float32(pts_dst)
+        
+        
+        h = cv2.getPerspectiveTransform(pts_src, pts_dst)
+
+
+        # 화면 중앙으로 이동
+        dx=image_width
+        dy=image_height
+
+        mtrx = np.float32([[1, 0, dx], [0, 1, dy], [0, 0, 1]])
+
+        M = np.matmul(mtrx, h)
+
+        img_result = cv2.warpPerspective(img_gray, M, (image_width*3,image_height*3))
+
+        img_result= cv2.resize(img_result, None, fx=0.5, fy=0.5)
+ 
+        cv2.imshow("opencv result", img_result)
+
+
+
+if __name__ == "__main__":
+
+    count_mouse_click = 0
+    caculate_start = 0
+
+    # 이미지파일을 로드하여 image에 저장  
+    img_original = cv2.imread("test.jpg", cv2.IMREAD_COLOR)
+
+    if type(img_original) == type(None):
+        print('이미지 파일을 열수 없습니다.') 
+        exit(1)
+
+
+    img_gray = cv2.cvtColor(img_original, cv2.COLOR_BGR2GRAY)
+
+    image_height, image_width = img_gray.shape
+    img_frame = img_original.copy()
+    
+    cv2.imshow("origianl", img_frame)
+    cv2.setMouseCallback("origianl", CallBackFunc)
+
+    print("왼쪽 위 - 오른쪽 위 - 왼쪽 아래, 오른쪽 아래 순으로 클릭해주세요")
+    cv2.waitKey(0)
