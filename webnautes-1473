@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p id="demo"></p>
+
+<script>
+var str = '안녕! 세상아';
+
+document.getElementById("demo").innerHTML = str;
+</script>
+
+</body>
+</html>
