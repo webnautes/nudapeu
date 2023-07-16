@@ -1,0 +1,37 @@
+import cv2
+import numpy as np
+
+
+img1 = cv2.imread('milky-way-4526277_1280.jpg')
+
+
+h, w, c = img1.shape
+
+
+img2 = np.zeros((h, w, 3), dtype=np.uint8)
+cv2.circle(img2, (int(w/2), int(h/3)), 100, (0, 255, 255), -1)
+
+
+if c == 3:
+    img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2BGRA)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2BGRA)
+
+
+desired_alpha = 45
+alpha = desired_alpha / 255.0 
+
+
+result = cv2.addWeighted(img1, 1, img2, alpha, 0)
+
+
+source = cv2.hconcat([img1, img2])
+
+
+cv2.imshow('Source', source)
+cv2.imshow('Result', result)
+
+
+cv2.waitKey(0)
+
+
+cv2.destroyAllWindows()
