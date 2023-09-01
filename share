@@ -1,0 +1,8 @@
+sudo mkdir /media/HostShared
+sudo mount -t 9p -o trans-virtio share /media/HostShared -oversion=9p2000.L
+
+
+sudo vi /etc/fstab
+
+맨 아래줄에 추가합니다.
+share   /media/HostShared   9p  trans=virtio,version=9p2000.L,rw,_netdev,nofail 0   0
