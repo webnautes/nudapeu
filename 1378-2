@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
+from shapely.geometry import Polygon
 
 
 
@@ -96,6 +97,7 @@ def getFingerPosition(max_contour, img_result, debug):
 
 
   max_contour = cv.approxPolyDP(max_contour,0.02*cv.arcLength(max_contour,True),True)
+  
   hull = cv.convexHull(max_contour)
 
   for point in hull:
@@ -108,8 +110,15 @@ def getFingerPosition(max_contour, img_result, debug):
       cv.circle(img_result, tuple(point), 15, [ 0, 0, 0], -1)
 
 
-  # STEP 6-2
+  # STEP 6-2    
+  max_contour2 = np.squeeze(max_contour) 
+  polygon = Polygon(max_contour2)
+  if polygon.is_simple == False: 
+
+      return -1,None
+  
   hull = cv.convexHull(max_contour, returnPoints=False)
+
   defects = cv.convexityDefects(max_contour, hull)
 
   if defects is None:
